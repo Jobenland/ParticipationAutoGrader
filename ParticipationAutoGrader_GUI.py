@@ -20,6 +20,12 @@ print = sg.EasyPrint
 
 studentDictionary = {}
 studentArr = []
+studentNameArr = []
+studentsArr = []
+selfGradeArr = []
+selfRawArr = []
+peerGradeArr = []
+peerRawArr = []
 sg.theme('DefaultNoMoreNagging')
 
 
@@ -52,15 +58,20 @@ def mainWin():
                 print("Auto Grader v1.0.0 by Jonathan Obenland")
                 print("Populating class roster...")
                 numStudents = populateDict(classRoster)
-                print("Importing", numStudents,
+                print("Populating JSON index with", numStudents,
                       "students. Gathering peer review data...")
                 gatherReviews(partFile)
                 print("Complete! Awaiting output information...")
                 output = sg.popup_get_folder("Enter Path to Save")
                 os.chdir(output)
+                # try:
                 with open("output.json", "w") as outfile:
                     json.dump(studentDictionary, outfile)
+                toXlsx = pd.DataFrame(studentDictionary).transpose()
+                toXlsx.to_excel(r'output.xlsx', index=True)
                 sg.Popup('Complete')
+                # except:
+                #     sg.Popup('ERROR! Close file and try agian')
             break
 
 
@@ -82,29 +93,34 @@ def populateDict(rosterPath):
             studentArr.append(name)
             studentDictionary[name] = {
                 "Name": name,
-                "Score": -1,
-                "Students": -1,
-                "Raw": [],
+                "SelfScore": -1,
+                "PeerScore": -1,
+                "TotalScore": -1,
+                "Students": 0,
+                "SelfRaw": [],
+                "PeerRaw": [],
+                "TotalRaw": [],
             }
     return numStudents
 
 
 def gatherReviews(partFile):
     df = pd.read_excel(partFile)
-    for i in range(46):
+    print("Imported", len(df.index), "submissions")
+    for i in range(len(df.index)):
         firstMember = df.iloc[i, 1:10]
         secondMember = df.iloc[i, 10:19]
         thirdMember = df.iloc[i, 19:28]
         fourthMember = df.iloc[i, 28:37]
         fifthMember = df.iloc[i, 37:46]
-        addToDict(firstMember)
-        addToDict(secondMember)
-        addToDict(thirdMember)
-        addToDict(fourthMember)
-        addToDict(fifthMember)
+        addToDict(firstMember, True)
+        addToDict(secondMember, False)
+        addToDict(thirdMember, False)
+        addToDict(fourthMember, False)
+        addToDict(fifthMember, False)
 
 
-def addToDict(series):
+def addToDict(series, isSelf):
     try:
         scoreArr = []
         studentName = series[0] + " " + series[1]
@@ -115,24 +131,55 @@ def addToDict(series):
                 for item in series[2:8]:
                     scoreArr.append(item)
                     studentDictionary[studentArr[index]
-                                      ]["Raw"].append(int(item))
+                                      ]["TotalRaw"].append(int(item))
+                    if isSelf:
+                        studentDictionary[studentArr[index]
+                                          ]["SelfRaw"].append(int(item))
+                    else:
+                        studentDictionary[studentArr[index]
+                                          ]["PeerRaw"].append(int(item))
+                if isSelf:
+                    studentDictionary[studentArr[index]
+                                      ]["SelfScore"] = float(st.mean(scoreArr))
+                else:
+                    studentDictionary[studentArr[index]
+                                      ]["PeerScore"] = float(st.mean(studentDictionary[studentArr[index]
+                                                                                       ]["PeerRaw"]))
+                    studentDictionary[studentArr[index]
+                                      ]["Students"] = studentDictionary[studentArr[index]
+                                                                        ]["Students"]+1
                 studentDictionary[studentArr[index]
-                                  ]["Score"] = float(st.mean(scoreArr))
-                studentDictionary[studentArr[index]
-                                  ]["Students"] += 1
-            elif similarity > 0.60:
+                                  ]["TotalScore"] = float(st.mean(studentDictionary[studentArr[index]
+                                                                                    ]["TotalRaw"]))
+                break
+            elif similarity <= 0.75 and similarity > 0.60:
                 cont = sg.PopupYesNo(
                     "Is", studentArr[index], "and", studentName, "the same person?")
                 if cont == "Yes":
                     for item in series[2:8]:
                         scoreArr.append(item)
                         studentDictionary[studentArr[index]
-                                          ]["Raw"].append(int(item))
+                                          ]["TotalRaw"].append(int(item))
+                        if isSelf:
+                            studentDictionary[studentArr[index]
+                                              ]["SelfRaw"].append(int(item))
+                        else:
+                            studentDictionary[studentArr[index]
+                                              ]["PeerRaw"].append(int(item))
+                    if isSelf:
+                        studentDictionary[studentArr[index]
+                                          ]["SelfScore"] = float(st.mean(scoreArr))
+                    else:
+                        studentDictionary[studentArr[index]
+                                          ]["PeerScore"] = float(st.mean(studentDictionary[studentArr[index]
+                                                                                           ]["PeerRaw"]))
+                        studentDictionary[studentArr[index]
+                                          ]["Students"] = studentDictionary[studentArr[index]
+                                                                            ]["Students"]+1
                     studentDictionary[studentArr[index]
-                                      ]["Score"] = float(st.mean(scoreArr))
-                    studentDictionary[studentArr[index]
-                                      ]["Students"] += 1
-            break
+                                      ]["TotalScore"] = float(st.mean(studentDictionary[studentArr[index]
+                                                                                        ]["TotalRaw"]))
+                    break
     except:
         studentName = "ERROR"
 
