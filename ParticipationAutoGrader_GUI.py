@@ -100,6 +100,7 @@ def populateDict(rosterPath):
                 "SelfRaw": [],
                 "PeerRaw": [],
                 "TotalRaw": [],
+                "Deduction": -1
             }
     return numStudents
 
@@ -135,6 +136,8 @@ def addToDict(series, isSelf):
                     if isSelf:
                         studentDictionary[studentArr[index]
                                           ]["SelfRaw"].append(int(item))
+                        studentDictionary[studentArr[index]
+                                          ]["Deduction"] = 0
                     else:
                         studentDictionary[studentArr[index]
                                           ]["PeerRaw"].append(int(item))
@@ -150,7 +153,8 @@ def addToDict(series, isSelf):
                                                                         ]["Students"]+1
                 studentDictionary[studentArr[index]
                                   ]["TotalScore"] = float(st.mean(studentDictionary[studentArr[index]
-                                                                                    ]["TotalRaw"]))
+                                                                                    ]["TotalRaw"])) + studentDictionary[studentArr[index]
+                                                                                                                        ]["Deduction"]
                 break
             elif similarity <= 0.75 and similarity > 0.60:
                 cont = sg.PopupYesNo(
@@ -163,6 +167,8 @@ def addToDict(series, isSelf):
                         if isSelf:
                             studentDictionary[studentArr[index]
                                               ]["SelfRaw"].append(int(item))
+                            studentDictionary[studentArr[index]
+                                              ]["Deduction"] = 0
                         else:
                             studentDictionary[studentArr[index]
                                               ]["PeerRaw"].append(int(item))
@@ -178,7 +184,8 @@ def addToDict(series, isSelf):
                                                                             ]["Students"]+1
                     studentDictionary[studentArr[index]
                                       ]["TotalScore"] = float(st.mean(studentDictionary[studentArr[index]
-                                                                                        ]["TotalRaw"]))
+                                                                                        ]["TotalRaw"])) + studentDictionary[studentArr[index]
+                                                                                                                            ]["Deduction"]
                     break
     except:
         studentName = "ERROR"
