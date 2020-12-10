@@ -1,6 +1,6 @@
 # Participation Auto Grader
 
-This program auto grades participation points based on a xlsx document
+This program auto grades participation points based on a xlsx document 
 
 
 ## Getting Started
