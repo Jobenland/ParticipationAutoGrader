@@ -109,27 +109,33 @@ def gatherReviews(partFile):
     df = pd.read_excel(partFile)
     print("Imported", len(df.index), "submissions")
     for i in range(len(df.index)):
-        firstMember = df.iloc[i, 1:10]
-        secondMember = df.iloc[i, 10:19]
-        thirdMember = df.iloc[i, 19:28]
-        fourthMember = df.iloc[i, 28:37]
-        fifthMember = df.iloc[i, 37:46]
+        # firstMember = df.iloc[i, 1:10]
+        # secondMember = df.iloc[i, 10:19]
+        # thirdMember = df.iloc[i, 19:28]
+        # fourthMember = df.iloc[i, 28:37]
+        # fifthMember = df.iloc[i, 37:46]
+
+        firstMember = df.iloc[i, 1:9]
+        secondMember = df.iloc[i, 9:17]
+        thirdMember = df.iloc[i, 17:25]
+        fourthMember = df.iloc[i, 25:33]
+        fifthMember = df.iloc[i, 33:41]
         addToDict(firstMember, True)
         addToDict(secondMember, False)
         addToDict(thirdMember, False)
         addToDict(fourthMember, False)
-        addToDict(fifthMember, False)
+        # addToDict(fifthMember, False)
 
 
 def addToDict(series, isSelf):
     try:
         scoreArr = []
-        studentName = series[0] + " " + series[1]
+        studentName = series[1] + ", " + series[0]
         studentName = str(studentName)
         for index in range(len(studentArr)):
             similarity = similar(studentArr[index], studentName)
-            if similarity > 0.75:
-                for item in series[2:8]:
+            if similarity > 0.90:
+                for item in series[2:6]:  # 8
                     scoreArr.append(item)
                     studentDictionary[studentArr[index]
                                       ]["TotalRaw"].append(int(item))
@@ -156,11 +162,11 @@ def addToDict(series, isSelf):
                                                                                     ]["TotalRaw"])) + studentDictionary[studentArr[index]
                                                                                                                         ]["Deduction"]
                 break
-            elif similarity <= 0.75 and similarity > 0.60:
+            elif similarity <= 0.90 and similarity > 0.60:
                 cont = sg.PopupYesNo(
-                    "Is", studentArr[index], "and", studentName, "the same person?")
+                    "Is", studentArr[index], "and", studentName, "the same person? -CONF=", similarity)
                 if cont == "Yes":
-                    for item in series[2:8]:
+                    for item in series[2:6]:
                         scoreArr.append(item)
                         studentDictionary[studentArr[index]
                                           ]["TotalRaw"].append(int(item))
