@@ -156,7 +156,7 @@ def addToDict(series, isSelf):
                                                                                     ]["TotalRaw"])) + studentDictionary[studentArr[index]
                                                                                                                         ]["Deduction"]
                 break
-            elif similarity <= 0.75 and similarity > 0.60:
+            elif similarity <= 0.75 and similarity > 0.57:
                 cont = sg.PopupYesNo(
                     "Is", studentArr[index], "and", studentName, "the same person?")
                 if cont == "Yes":
