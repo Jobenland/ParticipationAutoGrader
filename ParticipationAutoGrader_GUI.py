@@ -100,7 +100,9 @@ def populateDict(rosterPath):
                 "SelfRaw": [],
                 "PeerRaw": [],
                 "TotalRaw": [],
-                "Deduction": -1
+                "Deduction": -1,
+                "PersonalComments": "",
+                "OtherStudentComments": ""
             }
     return numStudents
 
@@ -114,14 +116,15 @@ def gatherReviews(partFile):
         thirdMember = df.iloc[i, 19:28]
         fourthMember = df.iloc[i, 28:37]
         fifthMember = df.iloc[i, 37:46]
-        addToDict(firstMember, True)
-        addToDict(secondMember, False)
-        addToDict(thirdMember, False)
-        addToDict(fourthMember, False)
-        addToDict(fifthMember, False)
+        reviewer = firstMember[0] + " " + firstMember[1]
+        addToDict(firstMember, True, reviewer)
+        addToDict(secondMember, False, reviewer)
+        addToDict(thirdMember, False, reviewer)
+        addToDict(fourthMember, False, reviewer)
+        addToDict(fifthMember, False, reviewer)
 
 
-def addToDict(series, isSelf):
+def addToDict(series, isSelf, reviewer):
     try:
         scoreArr = []
         studentName = series[0] + " " + series[1]
@@ -144,6 +147,10 @@ def addToDict(series, isSelf):
                 if isSelf:
                     studentDictionary[studentArr[index]
                                       ]["SelfScore"] = float(st.mean(scoreArr))
+
+                    studentDictionary[studentArr[index]
+                                      ]["PersonalComments"] = studentDictionary[studentArr[index]
+                                                                                ]["PersonalComments"] + series[8]
                 else:
                     studentDictionary[studentArr[index]
                                       ]["PeerScore"] = float(st.mean(studentDictionary[studentArr[index]
@@ -151,6 +158,11 @@ def addToDict(series, isSelf):
                     studentDictionary[studentArr[index]
                                       ]["Students"] = studentDictionary[studentArr[index]
                                                                         ]["Students"]+1
+                    formatedString = str(
+                        reviewer) + " said :" + ' "' + series[8] + ' " '
+                    studentDictionary[studentArr[index]
+                                      ]["OtherStudentComments"] = studentDictionary[studentArr[index]
+                                                                                    ]["OtherStudentComments"] + formatedString
                 studentDictionary[studentArr[index]
                                   ]["TotalScore"] = float(st.mean(studentDictionary[studentArr[index]
                                                                                     ]["TotalRaw"])) + studentDictionary[studentArr[index]
