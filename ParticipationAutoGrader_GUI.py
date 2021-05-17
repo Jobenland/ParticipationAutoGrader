@@ -147,10 +147,13 @@ def addToDict(series, isSelf, reviewer):
                 if isSelf:
                     studentDictionary[studentArr[index]
                                       ]["SelfScore"] = float(st.mean(scoreArr))
+                    try:
+                        studentDictionary[studentArr[index]
+                                          ]["PersonalComments"] = studentDictionary[studentArr[index]
+                                                                                    ]["PersonalComments"] + series[8]
+                    except:
+                        pass
 
-                    studentDictionary[studentArr[index]
-                                      ]["PersonalComments"] = studentDictionary[studentArr[index]
-                                                                                ]["PersonalComments"] + series[8]
                 else:
                     studentDictionary[studentArr[index]
                                       ]["PeerScore"] = float(st.mean(studentDictionary[studentArr[index]
@@ -158,11 +161,15 @@ def addToDict(series, isSelf, reviewer):
                     studentDictionary[studentArr[index]
                                       ]["Students"] = studentDictionary[studentArr[index]
                                                                         ]["Students"]+1
-                    formatedString = str(
-                        reviewer) + " said :" + ' "' + series[8] + ' " '
-                    studentDictionary[studentArr[index]
-                                      ]["OtherStudentComments"] = studentDictionary[studentArr[index]
-                                                                                    ]["OtherStudentComments"] + formatedString
+                    try:
+                        formatedString = str(
+                            reviewer) + " said :" + ' "' + series[8] + ' " '
+                        studentDictionary[studentArr[index]
+                                          ]["OtherStudentComments"] = studentDictionary[studentArr[index]
+                                                                                        ]["OtherStudentComments"] + formatedString
+                    except:
+                        pass
+
                 studentDictionary[studentArr[index]
                                   ]["TotalScore"] = float(st.mean(studentDictionary[studentArr[index]
                                                                                     ]["TotalRaw"])) + studentDictionary[studentArr[index]
@@ -187,6 +194,13 @@ def addToDict(series, isSelf, reviewer):
                     if isSelf:
                         studentDictionary[studentArr[index]
                                           ]["SelfScore"] = float(st.mean(scoreArr))
+                        try:
+                            studentDictionary[studentArr[index]
+                                              ]["PersonalComments"] = studentDictionary[studentArr[index]
+                                                                                        ]["PersonalComments"] + series[8]
+                        except:
+                            pass
+
                     else:
                         studentDictionary[studentArr[index]
                                           ]["PeerScore"] = float(st.mean(studentDictionary[studentArr[index]
@@ -194,6 +208,15 @@ def addToDict(series, isSelf, reviewer):
                         studentDictionary[studentArr[index]
                                           ]["Students"] = studentDictionary[studentArr[index]
                                                                             ]["Students"]+1
+                        try:
+                            formatedString = str(
+                                reviewer) + " said :" + ' "' + series[8] + ' " '
+                            studentDictionary[studentArr[index]
+                                              ]["OtherStudentComments"] = studentDictionary[studentArr[index]
+                                                                                            ]["OtherStudentComments"] + formatedString
+                        except:
+                            pass
+
                     studentDictionary[studentArr[index]
                                       ]["TotalScore"] = float(st.mean(studentDictionary[studentArr[index]
                                                                                         ]["TotalRaw"])) + studentDictionary[studentArr[index]
